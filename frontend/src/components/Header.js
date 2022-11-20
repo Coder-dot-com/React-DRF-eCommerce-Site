@@ -5,7 +5,7 @@ import Navbar from 'react-bootstrap/Navbar';
 
 function Header() {
   return (
-        <header>
+        <header className="py-1 px-5">
 
         <Navbar bg="light" expand="lg" collapseOnSelect>
       <Container fluid>
