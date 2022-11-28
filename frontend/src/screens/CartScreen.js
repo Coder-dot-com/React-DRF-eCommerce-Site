@@ -17,11 +17,15 @@ import { useParams } from "react-router";
 function CartScreen() {
   let { id } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
+
   const qty = location.search ? Number(location.search.split("=")[1]) : 1;
 
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
   const { cartItems } = cart;
+
+
 
   useEffect(() => {
     if (id) {
@@ -30,10 +34,12 @@ function CartScreen() {
   }, [dispatch, id, qty]);
 
   const removeFromCartHandler = (id) => {
-    dispatch(removeFromCart(id))
+    dispatch(removeFromCart(id));
   };
 
-  const checkoutHandler = () => {};
+  const checkoutHandler = () => {
+    navigate('/shipping')
+  };
 
   return (
     <Row>
@@ -106,10 +112,10 @@ function CartScreen() {
             </ListGroup.Item>
           </ListGroup>
 
-          <ListGroup.Item>
+          <ListGroup.Item className="p-3">
             <Button
               type="button"
-              className="btn-block"
+              className="btn-block w-100 "
               disabled={cartItems.length === 0}
               onClick={checkoutHandler}
             >
