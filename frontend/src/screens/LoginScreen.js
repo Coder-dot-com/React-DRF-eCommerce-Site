@@ -11,9 +11,9 @@ function LoginScreen() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
-  const location = useLocation();
   const navigate = useNavigate();
-
+  
+  const location = useLocation();
   const redirect = location.search ? location.search.split("=")[1] : "/";
   const userLogin = useSelector((state) => state.userLogin);
   const { error, loading, userInfo } = userLogin;
