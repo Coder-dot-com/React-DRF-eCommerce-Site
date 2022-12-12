@@ -10,12 +10,15 @@ import {
   createOrder,
   getOrderDetails,
   payOrder,
+  deliverOrder,
 } from "../actions/orderActions";
-import { ORDER_PAY_RESET } from "../constants/orderConstants";
+import {
+  ORDER_DELIVER_RESET,
+  ORDER_PAY_RESET,
+} from "../constants/orderConstants";
 
 function OrderScreen() {
   const { orderId } = useParams();
-  console.log("orderId", orderId);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -26,8 +29,8 @@ function OrderScreen() {
   const orderPay = useSelector((state) => state.orderPay);
   const { loading: loadingPay, success: successPay } = orderPay;
 
-  //   const orderDeliver = useSelector(state => state.orderDeliver)
-  //   const { loading: loadingDeliver, success: successDeliver } = orderDeliver
+  const orderDeliver = useSelector((state) => state.orderDeliver);
+  const { loading: loadingDeliver, success: successDeliver } = orderDeliver;
 
   const userLogin = useSelector((state) => state.userLogin);
   const { userInfo } = userLogin;
@@ -49,8 +52,14 @@ function OrderScreen() {
       navigate("/login");
     }
 
-    if (!order || successPay || order._id !== Number(orderId)) {
+    if (
+      !order ||
+      successPay ||
+      order._id !== Number(orderId) ||
+      successDeliver
+    ) {
       dispatch({ type: ORDER_PAY_RESET });
+      dispatch({ type: ORDER_DELIVER_RESET });
       dispatch(getOrderDetails(orderId));
     } else if (!order.isPaid) {
       if (!window.paypal) {
@@ -59,7 +68,7 @@ function OrderScreen() {
         setSdkReady(true);
       }
     }
-  }, [dispatch, order, orderId, successPay]);
+  }, [dispatch, order, orderId, successPay, successDeliver]);
 
   const [sdkReady, setSdkReady] = useState(false);
   if (!loading && !error && order) {
@@ -71,6 +80,9 @@ function OrderScreen() {
     dispatch(payOrder(orderId, paymentResult));
   };
 
+  const deliverHandler = () => {
+    dispatch(deliverOrder(order));
+  };
   return loading ? (
     <Loader />
   ) : error ? (
@@ -207,21 +219,21 @@ function OrderScreen() {
                 </ListGroup.Item>
               )}
             </ListGroup>
-            {/* {loadingDeliver && <Loader />}
+             {loadingDeliver && <Loader />}
             {userInfo &&
               userInfo.isAdmin &&
               order.isPaid &&
               !order.isDelivered && (
-                <ListGroup.Item>
+                <ListGroup.Item className="mx-auto m-3">
                   <Button
                     type="button"
-                    className="btn btn-block"
-                    // onClick={deliverHandler}
+                    className="btn "
+                    onClick={deliverHandler}
                   >
                     Mark As Delivered
                   </Button>
                 </ListGroup.Item>
-              )} */}
+              )}
           </Card>
         </Col>
       </Row>
